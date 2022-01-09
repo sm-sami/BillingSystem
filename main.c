@@ -4,18 +4,16 @@
 #include <stdbool.h>
 
 int getPrice(char * PID){
-    printf("%s\n", PID);
     char line[1024];
     struct Product {
         char * PID;
         int price;
     } product;
-    FILE *products;
+    FILE * products;
     products = fopen("Products.csv", "r");
     while (fgets(line, 1024, products)) {
         char * token = strtok(line, ", ");
         product.PID = token;
-        printf("%s\n", product.PID);
         token = strtok(NULL, ", ");
         product.price = atoi(token);
         if (!strcmp(PID, product.PID)) {
@@ -37,18 +35,18 @@ int addItem(FILE *bill){
     return price;
 }
 
-void printInvoice(FILE *bill, int total){
+void printInvoice(FILE * bill, int total){
     fprintf(bill, "\nTotal\t\t\t\t%d", total);
     fclose(bill);
 }
 
 void makeInvoice(){
-    bool toPrint = false;
-    FILE *bill;
+    bool isPrinted = false;
+    FILE * bill;
     int total = 0;
     bill = fopen("bill.txt", "w");
     fprintf(bill, "\t\tINVOICE\nPID\t\tQuantity\tPrice");
-    while (!toPrint) {
+    while (!isPrinted) {
         printf("\n[1] Add Item\n[2] Print Bill\n[0] Cancel Bill\nChoose an option:");
         int option;
         scanf("%d", &option);
@@ -59,7 +57,7 @@ void makeInvoice(){
                 total += addItem(bill);
                 break;
             case 2:
-                toPrint = true;
+                isPrinted = true;
                 printInvoice(bill, total);
                 break;
             default:
