@@ -3,24 +3,30 @@
 #include <string.h>
 #include <stdbool.h>
 
-int getPrice(char * PID){
+struct Product {
+    char * PID, * name;
+    int pricePerItem;
+};
+
+struct Product getDetails(char * PID){
+    struct Product product;
     char line[1024];
-    struct Product {
-        char * PID;
-        int price;
-    } product;
     FILE * products;
     products = fopen("Products.csv", "r");
     while (fgets(line, 1024, products)) {
         char * token = strtok(line, ", ");
         product.PID = token;
         token = strtok(NULL, ", ");
-        product.price = atoi(token);
+        product.name = token;
+        token = strtok(line, ", ");
+        product.pricePerItem = atoi(token);
         if (!strcmp(PID, product.PID)) {
-            return product.price;
+            return product;
         }
     }
-    return 0;
+    product.pricePerItem = 0;
+    product.name = "NOT FOUND";
+    return product;
 }
 
 int addItem(FILE *bill){
@@ -30,10 +36,10 @@ int addItem(FILE *bill){
     printf("Quantity:");
     int quantity;
     scanf("%d", &quantity);
-    int pricePerItem = getPrice(PID);
-    if (pricePerItem){
-        int price = pricePerItem * quantity;
-        fprintf(bill, "\n%s\t%d\t\t\t%d\t\t\t\t%d", PID, quantity, pricePerItem, price);
+    struct Product prodDetails = getDetails(PID);
+    if (prodDetails.pricePerItem){
+        int price = prodDetails.pricePerItem * quantity;
+        fprintf(bill, "\n%s\t%s\t%d\t\t\t%d\t\t\t\t%d", PID, prodDetails.name, quantity, prodDetails.pricePerItem, price);
         return price;
     }
     printf("%s is not a valid PID", PID);
@@ -42,7 +48,7 @@ int addItem(FILE *bill){
 
 void printInvoice(FILE * bill, int total){
     fprintf(bill, "\n\nTotal\t%d", total);
-    fprintf(bill, "\n==============END OF INVOICE==============");
+    fprintf(bill, "\n==================END OF INVOICE==================");
     fclose(bill);
 }
 
@@ -51,7 +57,7 @@ void makeInvoice(){
     FILE * bill;
     int total = 0;
     bill = fopen("bill.txt", "w");
-    fprintf(bill, "\t\t\t\tINVOICE\nPID\t\tQuantity\tPricePerItem\tPrice");
+    fprintf(bill, "\t\t\t\tINVOICE\nPID\t\tName\tQuantity\tPricePerItem\tPrice");
     while (!isPrinted) {
         printf("\n[1] Add Item\n[2] Print Bill\n[0] Cancel Bill\nChoose an option:");
         int option;
