@@ -79,10 +79,39 @@ void makeInvoice(){
     }
 }
 
+int addProduct(){
+    FILE * products;
+    char line[1024];
+    products = fopen("Products.csv", "r");
+    struct Product product;
+    printf("\nEnter PID:");
+    scanf("%s", product.PID);
+    while (fgets(line, 1024, products)) {
+        char * token = strtok(line, ", ");
+        char * PID = token;
+        token = strtok(NULL, ", ");
+        product.name = token;
+        token = strtok(line, ", ");
+        product.pricePerItem = atoi(token);
+        if (!strcmp(PID, product.PID)) {
+            return 0;
+        }
+    }
+    fclose(products);
+    printf("Enter Product Name:");
+    scanf("%s", product.name);
+    printf("Enter Price Per Item:");
+    scanf("%d", &product.pricePerItem);
+    products = fopen("Products.csv", "a");
+    fprintf(products, "\n%s, %s, %d", product.PID, product.name, product.pricePerItem);
+    fclose(products);
+    return 1;
+}
+
 int main() {
     printf("\t\tBilling System");
     while (true) {
-        printf("\n[1] Make Invoice\n[2] Add New Products\n[0] Exit\nChoose an option:");
+        printf("\n[1] Make Invoice\n[2] Add New Product\n[0] Exit\nChoose an option:");
         int option;
         scanf("%d", &option);
         switch (option) {
@@ -92,7 +121,8 @@ int main() {
                 makeInvoice();
                 break;
             case 2:
-                //TODO: addProduct;
+                if (addProduct()) printf("Product Added Successfully");
+                else printf("Unsuccessful, PID might already exists");
                 break;
             default:
                 printf("Invalid Option");
