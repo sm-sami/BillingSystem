@@ -33,7 +33,7 @@ int addItem(FILE *bill){
     int pricePerItem = getPrice(PID);
     if (pricePerItem){
         int price = pricePerItem * quantity;
-        fprintf(bill, "\n%s\t%d\t\t\t%d\t\t%d", PID, quantity, pricePerItem, price);
+        fprintf(bill, "\n%s\t%d\t\t\t%d\t\t\t\t%d", PID, quantity, pricePerItem, price);
         return price;
     }
     printf("%s is not a valid PID", PID);
@@ -42,6 +42,7 @@ int addItem(FILE *bill){
 
 void printInvoice(FILE * bill, int total){
     fprintf(bill, "\n\nTotal\t%d", total);
+    fprintf(bill, "\n==============END OF INVOICE==============");
     fclose(bill);
 }
 
@@ -50,7 +51,7 @@ void makeInvoice(){
     FILE * bill;
     int total = 0;
     bill = fopen("bill.txt", "w");
-    fprintf(bill, "\t\tINVOICE\nPID\t\tQuantity\tPricePerItem\tPrice");
+    fprintf(bill, "\t\t\t\tINVOICE\nPID\t\tQuantity\tPricePerItem\tPrice");
     while (!isPrinted) {
         printf("\n[1] Add Item\n[2] Print Bill\n[0] Cancel Bill\nChoose an option:");
         int option;
@@ -62,8 +63,8 @@ void makeInvoice(){
                 total += addItem(bill);
                 break;
             case 2:
-                isPrinted = true;
                 printInvoice(bill, total);
+                isPrinted = true;
                 break;
             default:
                 printf("\nInvalid Option");
