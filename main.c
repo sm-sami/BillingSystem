@@ -1,6 +1,29 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <stdbool.h>
+
+int getPrice(char * PID){
+    printf("%s\n", PID);
+    char line[1024];
+    struct Product {
+        char * PID;
+        int price;
+    } product;
+    FILE *products;
+    products = fopen("Products.csv", "r");
+    while (fgets(line, 1024, products)) {
+        char * token = strtok(line, ", ");
+        product.PID = token;
+        printf("%s\n", product.PID);
+        token = strtok(NULL, ", ");
+        product.price = atoi(token);
+        if (!strcmp(PID, product.PID)) {
+            return product.price;
+        }
+    }
+    return 0;
+}
 
 int addItem(FILE *bill){
     printf("Enter PID:");
@@ -9,7 +32,7 @@ int addItem(FILE *bill){
     printf("Quantity:");
     int quantity;
     scanf("%d", &quantity);
-    int price = 50 * quantity;
+    int price = getPrice(PID) * quantity;
     fprintf(bill, "\n%s\t%d\t\t\t%d", PID, quantity, price);
     return price;
 }
@@ -26,7 +49,7 @@ void makeInvoice(){
     bill = fopen("bill.txt", "w");
     fprintf(bill, "\t\tINVOICE\nPID\t\tQuantity\tPrice");
     while (!toPrint) {
-        printf("\n[1] Add Item\n[2] Print Bill\nChoose an option:");
+        printf("\n[1] Add Item\n[2] Print Bill\n[0] Cancel Bill\nChoose an option:");
         int option;
         scanf("%d", &option);
         switch (option) {
