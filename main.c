@@ -110,6 +110,27 @@ int addProduct(){
     return 1;
 }
 
+int deleteProduct(){
+    FILE * products, * productsNew;
+    char line[1024], PID[5];
+    products = fopen("Products.csv", "r");
+    productsNew = fopen("Products_New.csv", "w");
+    struct Product product;
+    printf("\nEnter PID:");
+    scanf("%s", PID);
+    while (fgets(line, 1024, products)) {
+        product = parseCSV(line);
+        if (strcmp(PID, product.PID)) {
+            fprintf(productsNew, "%s, %s, %d\n", product.PID, product.name, product.pricePerItem);
+        }
+    }
+    fclose(productsNew);
+    fclose(products);
+    remove("Products.csv");
+    rename("Products_New.csv", "Products.csv");
+    return 1;
+}
+
 int main() {
     printf("\t\tBilling System");
     while (true) {
@@ -125,6 +146,10 @@ int main() {
             case 2:
                 if (addProduct()) printf("Product Added Successfully");
                 else printf("Unsuccessful, PID might already exists");
+                break;
+            case 3:
+                if(deleteProduct()) printf("Product Deleted Successfully");
+                else printf("Unsuccessful, PID does not exist");
                 break;
             default:
                 printf("Invalid Option");
