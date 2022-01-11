@@ -103,25 +103,17 @@ int validatePID(char * PID) {
 
 int addProduct() {
     FILE * products;
-    char line[1024], PID[5];
-    products = fopen("Products.csv", "r");
-    struct Product product;
+    char PID[5], name[25];
+    int pricePerItem;
     printf("\nEnter PID:");
     scanf("%s", PID);
-    while (fgets(line, 1024, products)) {
-        product = parseCSV(line);
-        if (!strcmp(PID, product.PID)) {
-            return 0;
-        }
-    }
-    fclose(products);
-    product.PID = PID;
-    printf("Enter Product Name:");
-    scanf("%s", product.name);
-    printf("Enter Price Per Item:");
-    scanf("%d", &product.pricePerItem);
+    if (validatePID(PID)) return 0;
     products = fopen("Products.csv", "a");
-    fprintf(products, "\n%s, %s, %d", product.PID, product.name, product.pricePerItem);
+    printf("Enter Product Name:");
+    scanf("%s", name);
+    printf("Enter Price Per Item:");
+    scanf("%d", &pricePerItem);
+    fprintf(products, "\n%s, %s, %d", PID, name, pricePerItem);
     fclose(products);
     return 1;
 }
