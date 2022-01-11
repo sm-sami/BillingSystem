@@ -85,6 +85,22 @@ void makeInvoice(){
     }
 }
 
+int validatePID(char * PID){
+    FILE * products;
+    char line[1024];
+    products = fopen("Products.csv", "r");
+    struct Product product;
+    while (fgets(line, 1024, products)) {
+        product = parseCSV(line);
+        if (!strcmp(PID, product.PID)) {
+            fclose(products);
+            return 1;
+        }
+    }
+    fclose(products);
+    return 0;
+}
+
 int addProduct(){
     FILE * products;
     char line[1024], PID[5];
@@ -118,17 +134,20 @@ int deleteProduct(){
     struct Product product;
     printf("\nEnter PID:");
     scanf("%s", PID);
-    while (fgets(line, 1024, products)) {
-        product = parseCSV(line);
-        if (strcmp(PID, product.PID)) {
-            fprintf(productsNew, "%s, %s, %d\n", product.PID, product.name, product.pricePerItem);
+    if (validatePID(PID)) {
+        while (fgets(line, 1024, products)) {
+            product = parseCSV(line);
+            if (strcmp(PID, product.PID)) {
+                fprintf(productsNew, "%s, %s, %d\n", product.PID, product.name, product.pricePerItem);
+            }
         }
+        fclose(productsNew);
+        fclose(products);
+        remove("Products.csv");
+        rename("Products_New.csv", "Products.csv");
+        return 1;
     }
-    fclose(productsNew);
-    fclose(products);
-    remove("Products.csv");
-    rename("Products_New.csv", "Products.csv");
-    return 1;
+    return 0;
 }
 
 int main() {
