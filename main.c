@@ -8,18 +8,24 @@ struct Product {
     int pricePerItem;
 };
 
+struct Product parseCSV(char * line) {
+    struct Product product;
+    char * token = strtok(line, ", ");
+    product.PID = token;
+    token = strtok(NULL, ", ");
+    product.name = token;
+    token = strtok(line, ", ");
+    product.pricePerItem = atoi(token);
+    return product;
+}
+
 struct Product getDetails(char * PID){
     struct Product product;
     char line[1024];
     FILE * products;
     products = fopen("Products.csv", "r");
     while (fgets(line, 1024, products)) {
-        char * token = strtok(line, ", ");
-        product.PID = token;
-        token = strtok(NULL, ", ");
-        product.name = token;
-        token = strtok(line, ", ");
-        product.pricePerItem = atoi(token);
+        product = parseCSV(line);
         if (!strcmp(PID, product.PID)) {
             return product;
         }
@@ -29,7 +35,7 @@ struct Product getDetails(char * PID){
     return product;
 }
 
-int addItem(FILE *bill){
+int addItem(FILE * bill){
     printf("Enter PID:");
     char PID[5];
     scanf("%s", PID);
@@ -81,23 +87,19 @@ void makeInvoice(){
 
 int addProduct(){
     FILE * products;
-    char line[1024];
+    char line[1024], PID[5];
     products = fopen("Products.csv", "r");
     struct Product product;
     printf("\nEnter PID:");
-    scanf("%s", product.PID);
+    scanf("%s", PID);
     while (fgets(line, 1024, products)) {
-        char * token = strtok(line, ", ");
-        char * PID = token;
-        token = strtok(NULL, ", ");
-        product.name = token;
-        token = strtok(line, ", ");
-        product.pricePerItem = atoi(token);
+        product = parseCSV(line);
         if (!strcmp(PID, product.PID)) {
             return 0;
         }
     }
     fclose(products);
+    product.PID = PID;
     printf("Enter Product Name:");
     scanf("%s", product.name);
     printf("Enter Price Per Item:");
