@@ -153,7 +153,7 @@ int deleteProduct(){
 int main() {
     printf("\t\tBilling System");
     while (true) {
-        printf("\n[1] Make Invoice\n[2] Add New Product\n[0] Exit\nChoose an option:");
+        printf("\n[1] Make Invoice\n[2] Add New Product\n[3] Delete A Product\n[0] Exit\nChoose an option:");
         int option;
         scanf("%d", &option);
         switch (option) {
