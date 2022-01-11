@@ -19,7 +19,7 @@ struct Product parseCSV(char * line) {
     return product;
 }
 
-struct Product getDetails(char * PID){
+struct Product getDetails(char * PID) {
     struct Product product;
     char line[1024];
     FILE * products;
@@ -35,7 +35,7 @@ struct Product getDetails(char * PID){
     return product;
 }
 
-int addItem(FILE * bill){
+int addItem(FILE * bill) {
     printf("Enter PID:");
     char PID[5];
     scanf("%s", PID);
@@ -43,7 +43,7 @@ int addItem(FILE * bill){
     int quantity;
     scanf("%d", &quantity);
     struct Product prodDetails = getDetails(PID);
-    if (prodDetails.pricePerItem){
+    if (prodDetails.pricePerItem) {
         int price = prodDetails.pricePerItem * quantity;
         fprintf(bill, "\n%s\t%s\t%d\t\t\t%d\t\t\t\t%d", PID, prodDetails.name, quantity, prodDetails.pricePerItem, price);
         return price;
@@ -52,13 +52,13 @@ int addItem(FILE * bill){
     return 0;
 }
 
-void printInvoice(FILE * bill, int total){
+void printInvoice(FILE * bill, int total) {
     fprintf(bill, "\n\nTotal\t%d", total);
     fprintf(bill, "\n==================END OF INVOICE==================");
     fclose(bill);
 }
 
-void makeInvoice(){
+void makeInvoice() {
     bool isPrinted = false;
     FILE * bill;
     int total = 0;
@@ -85,7 +85,7 @@ void makeInvoice(){
     }
 }
 
-int validatePID(char * PID){
+int validatePID(char * PID) {
     FILE * products;
     char line[1024];
     products = fopen("Products.csv", "r");
@@ -101,7 +101,7 @@ int validatePID(char * PID){
     return 0;
 }
 
-int addProduct(){
+int addProduct() {
     FILE * products;
     char line[1024], PID[5];
     products = fopen("Products.csv", "r");
@@ -126,7 +126,7 @@ int addProduct(){
     return 1;
 }
 
-int deleteProduct(){
+int deleteProduct() {
     FILE * products, * productsNew;
     char line[1024], PID[5];
     products = fopen("Products.csv", "r");
@@ -163,12 +163,20 @@ int main() {
                 makeInvoice();
                 break;
             case 2:
-                if (addProduct()) printf("Product Added Successfully");
-                else printf("Unsuccessful, PID might already exists");
+                if (addProduct()) {
+                    printf("Product Added Successfully");
+                }
+                else {
+                    printf("Unsuccessful, PID might already exists");
+                }
                 break;
             case 3:
-                if(deleteProduct()) printf("Product Deleted Successfully");
-                else printf("Unsuccessful, PID does not exist");
+                if (deleteProduct()) {
+                    printf("Product Deleted Successfully");
+                }
+                else {
+                    printf("Unsuccessful, PID does not exist");
+                }
                 break;
             default:
                 printf("Invalid Option");
