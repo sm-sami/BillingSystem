@@ -14,7 +14,7 @@ struct Product parseCSV(char * line) {
     product.PID = token;
     token = strtok(NULL, ", ");
     product.name = token;
-    token = strtok(line, ", ");
+    token = strtok(NULL, ", ");
     product.pricePerItem = atoi(token);
     return product;
 }
