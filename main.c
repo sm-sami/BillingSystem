@@ -36,7 +36,7 @@ struct Product getDetails(char * PID) {
 }
 
 int addItem(FILE * bill) {
-    printf("Enter PID:");
+    printf("\nEnter PID:");
     char PID[5];
     scanf("%s", PID);
     printf("Quantity:");
@@ -156,18 +156,18 @@ int main() {
                 break;
             case 2:
                 if (addProduct()) {
-                    printf("Product Added Successfully");
+                    printf("Product Added Successfully\n");
                 }
                 else {
-                    printf("Unsuccessful, PID might already exists");
+                    printf("Unsuccessful, PID might already exists\n");
                 }
                 break;
             case 3:
                 if (deleteProduct()) {
-                    printf("Product Deleted Successfully");
+                    printf("Product Deleted Successfully\n");
                 }
                 else {
-                    printf("Unsuccessful, PID does not exist");
+                    printf("Unsuccessful, PID does not exist\n");
                 }
                 break;
             default:
