@@ -127,10 +127,12 @@ int deleteProduct() {
     printf("\nEnter PID:");
     scanf("%s", PID);
     if (validatePID(PID)) {
+        int newLine = 0;
         while (fgets(line, 1024, products)) {
             product = parseCSV(line);
             if (strcmp(PID, product.PID)) {
-                fprintf(productsNew, "%s, %s, %d\n", product.PID, product.name, product.pricePerItem);
+                if(newLine++) fprintf(productsNew, "\n");
+                fprintf(productsNew, "%s, %s, %d", product.PID, product.name, product.pricePerItem);
             }
         }
         fclose(productsNew);
