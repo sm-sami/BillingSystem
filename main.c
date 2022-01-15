@@ -144,10 +144,22 @@ int deleteProduct() {
     return 0;
 }
 
+void printInventory() {
+    FILE * products;
+    char line[1024];
+    struct Product product;
+    products = fopen("Products.csv", "r");
+    printf("\nPID\tName\tPricePerItem\n");
+    while (fgets(line, 1024, products)) {
+        product = parseCSV(line);
+        printf("%s\t%s\t%d\n", product.PID, product.name, product.pricePerItem);
+    }
+}
+
 int main() {
     printf("\t\tBilling System");
     while (true) {
-        printf("\n[1] Make Invoice\n[2] Add New Product\n[3] Delete A Product\n[0] Exit\nChoose an option:");
+        printf("\n[1] Make Invoice\n[2] Add New Product\n[3] Delete A Product\n[4] Print Inventory\n[0] Exit\nChoose an option:");
         int option;
         scanf("%d", &option);
         switch (option) {
@@ -171,6 +183,9 @@ int main() {
                 else {
                     printf("Unsuccessful, PID does not exist\n");
                 }
+                break;
+            case 4:
+                printInventory();
                 break;
             default:
                 printf("Invalid Option");
