@@ -8,8 +8,10 @@ struct Product {
     int pricePerItem;
 };
 
-struct Product parseCSV(char * line) {
-    struct Product product;
+typedef struct Product Product;
+
+Product parseCSV(char * line) {
+    Product product;
     char * token = strtok(line, ", ");
     product.PID = token;
     token = strtok(NULL, ", ");
@@ -19,8 +21,8 @@ struct Product parseCSV(char * line) {
     return product;
 }
 
-struct Product getDetails(char * PID) {
-    struct Product product;
+Product getDetails(char * PID) {
+    Product product;
     char line[1024];
     FILE * products;
     products = fopen("Products.csv", "r");
@@ -42,7 +44,7 @@ int addItem(FILE * bill) {
     printf("Quantity:");
     int quantity;
     scanf("%d", &quantity);
-    struct Product prodDetails = getDetails(PID);
+    Product prodDetails = getDetails(PID);
     if (prodDetails.pricePerItem) {
         int price = prodDetails.pricePerItem * quantity;
         fprintf(bill, "\n%s\t%s\t%d\t\t\t%d\t\t\t\t%d", PID, prodDetails.name, quantity, prodDetails.pricePerItem, price);
@@ -89,7 +91,7 @@ int validatePID(char * PID) {
     FILE * products;
     char line[1024];
     products = fopen("Products.csv", "r");
-    struct Product product;
+    Product product;
     while (fgets(line, 1024, products)) {
         product = parseCSV(line);
         if (!strcmp(PID, product.PID)) {
@@ -123,7 +125,7 @@ int deleteProduct() {
     char line[1024], PID[5];
     products = fopen("Products.csv", "r");
     productsNew = fopen("Products_New.csv", "w");
-    struct Product product;
+    Product product;
     printf("\nEnter PID:");
     scanf("%s", PID);
     if (validatePID(PID)) {
@@ -147,7 +149,7 @@ int deleteProduct() {
 void printInventory() {
     FILE * products;
     char line[1024];
-    struct Product product;
+    Product product;
     products = fopen("Products.csv", "r");
     printf("\nPID\tName\tPricePerItem\n");
     while (fgets(line, 1024, products)) {
