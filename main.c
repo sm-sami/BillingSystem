@@ -3,12 +3,14 @@
 #include <string.h>
 #include <stdbool.h>
 
-struct Product {
+#define PID_LENGTH 5
+#define MAX_PRODUCT_NAME_LENGTH 25
+#define LINE_LENGTH 1025
+
+typedef struct{
     char * PID, * name;
     int pricePerItem;
-};
-
-typedef struct Product Product;
+} Product;
 
 Product parseCSV(char * line) {
     Product product;
@@ -24,10 +26,10 @@ Product parseCSV(char * line) {
 
 int validatePID(char * PID) {
     FILE * products;
-    char line[1024];
+    char line[LINE_LENGTH];
     products = fopen("Products.csv", "r");
     Product product;
-    while (fgets(line, 1024, products)) {
+    while (fgets(line, LINE_LENGTH, products)) {
         product = parseCSV(line);
         if (!strcmp(PID, product.PID)) {
             fclose(products);
@@ -40,10 +42,10 @@ int validatePID(char * PID) {
 
 Product getDetails(char * PID) {
     Product product;
-    char line[1024];
+    char line[LINE_LENGTH];
     FILE * products;
     products = fopen("Products.csv", "r");
-    while (fgets(line, 1024, products)) {
+    while (fgets(line, LINE_LENGTH, products)) {
         product = parseCSV(line);
         if (!strcmp(PID, product.PID)) {
             return product;
@@ -56,7 +58,7 @@ Product getDetails(char * PID) {
 
 int addItem(FILE * bill) {
     printf("\nEnter PID:");
-    char PID[5];
+    char PID[PID_LENGTH];
     scanf("%s", PID);
     if (validatePID(PID)) {
         Product prodDetails = getDetails(PID);
@@ -105,7 +107,7 @@ void makeInvoice() {
 
 int addProduct() {
     FILE * products;
-    char PID[5], name[25];
+    char PID[PID_LENGTH], name[MAX_PRODUCT_NAME_LENGTH];
     int pricePerItem;
     printf("\nEnter PID:");
     scanf("%s", PID);
@@ -122,7 +124,7 @@ int addProduct() {
 
 int deleteProduct() {
     FILE * products, * productsNew;
-    char line[1024], PID[5];
+    char line[LINE_LENGTH], PID[PID_LENGTH];
     products = fopen("Products.csv", "r");
     productsNew = fopen("Products_New.csv", "w");
     Product product;
@@ -130,7 +132,7 @@ int deleteProduct() {
     scanf("%s", PID);
     if (validatePID(PID)) {
         int newLine = 0;
-        while (fgets(line, 1024, products)) {
+        while (fgets(line, LINE_LENGTH, products)) {
             product = parseCSV(line);
             if (strcmp(PID, product.PID) != 0) {
                 if(newLine++) fprintf(productsNew, "\n");
@@ -148,11 +150,11 @@ int deleteProduct() {
 
 void printInventory() {
     FILE * products;
-    char line[1024];
+    char line[LINE_LENGTH];
     Product product;
     products = fopen("Products.csv", "r");
     printf("\nPID\tName\tPricePerItem\n");
-    while (fgets(line, 1024, products)) {
+    while (fgets(line, LINE_LENGTH, products)) {
         product = parseCSV(line);
         printf("%s\t%s\t%d\n", product.PID, product.name, product.pricePerItem);
     }
