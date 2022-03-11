@@ -12,12 +12,13 @@ typedef struct Product Product;
 
 Product parseCSV(char * line) {
     Product product;
+    char * end;
     char * token = strtok(line, ", ");
     product.PID = token;
     token = strtok(NULL, ", ");
     product.name = token;
     token = strtok(NULL, ", ");
-    product.pricePerItem = atoi(token);
+    product.pricePerItem = strtol(token, &end, 10);
     return product;
 }
 
@@ -132,7 +133,7 @@ int deleteProduct() {
         int newLine = 0;
         while (fgets(line, 1024, products)) {
             product = parseCSV(line);
-            if (strcmp(PID, product.PID)) {
+            if (strcmp(PID, product.PID) != 0) {
                 if(newLine++) fprintf(productsNew, "\n");
                 fprintf(productsNew, "%s, %s, %d", product.PID, product.name, product.pricePerItem);
             }
