@@ -22,6 +22,22 @@ Product parseCSV(char * line) {
     return product;
 }
 
+int validatePID(char * PID) {
+    FILE * products;
+    char line[1024];
+    products = fopen("Products.csv", "r");
+    Product product;
+    while (fgets(line, 1024, products)) {
+        product = parseCSV(line);
+        if (!strcmp(PID, product.PID)) {
+            fclose(products);
+            return 1;
+        }
+    }
+    fclose(products);
+    return 0;
+}
+
 Product getDetails(char * PID) {
     Product product;
     char line[1024];
@@ -42,11 +58,11 @@ int addItem(FILE * bill) {
     printf("\nEnter PID:");
     char PID[5];
     scanf("%s", PID);
-    printf("Quantity:");
-    int quantity;
-    scanf("%d", &quantity);
-    Product prodDetails = getDetails(PID);
-    if (prodDetails.pricePerItem) {
+    if (validatePID(PID)) {
+        Product prodDetails = getDetails(PID);
+        int quantity;
+        printf("Quantity:");
+        scanf("%d", &quantity);
         int price = prodDetails.pricePerItem * quantity;
         fprintf(bill, "\n%s\t%s\t%d\t\t\t%d\t\t\t\t%d", PID, prodDetails.name, quantity, prodDetails.pricePerItem, price);
         return price;
@@ -54,7 +70,6 @@ int addItem(FILE * bill) {
     printf("%s is not a valid PID", PID);
     return 0;
 }
-
 void printInvoice(FILE * bill, int total) {
     fprintf(bill, "\n\nTotal\t%d", total);
     fprintf(bill, "\n==================END OF INVOICE==================");
@@ -86,22 +101,6 @@ void makeInvoice() {
                 break;
         }
     }
-}
-
-int validatePID(char * PID) {
-    FILE * products;
-    char line[1024];
-    products = fopen("Products.csv", "r");
-    Product product;
-    while (fgets(line, 1024, products)) {
-        product = parseCSV(line);
-        if (!strcmp(PID, product.PID)) {
-            fclose(products);
-            return 1;
-        }
-    }
-    fclose(products);
-    return 0;
 }
 
 int addProduct() {
