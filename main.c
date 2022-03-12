@@ -49,20 +49,20 @@ int validatePID(char * PID) {
 
 Product getDetails(char * PID) {
     Product product;
-    if (!validatePID(PID)) {
-        product.pricePerItem = 0;
-        product.name = "NOT FOUND";
-        return product;
-    }
-    char line[LINE_LENGTH];
-    FILE * products;
-    products = fopen("Products.csv", "r");
-    while (fgets(line, LINE_LENGTH, products)) {
-        product = parseCSV(line);
-        if (!strcmp(PID, product.PID)) {
-            return product;
+    product.pricePerItem = 0;
+    product.name = "NOT FOUND";
+    if (validatePID(PID)) {
+        char line[LINE_LENGTH];
+        FILE *products;
+        products = fopen("Products.csv", "r");
+        while (fgets(line, LINE_LENGTH, products)) {
+            product = parseCSV(line);
+            if (!strcmp(PID, product.PID)) {
+                return product;
+            }
         }
     }
+    return product;
 }
 
 int addItem(FILE * bill) {
