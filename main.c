@@ -12,6 +12,13 @@ typedef struct{
     int pricePerItem;
 } Product;
 
+int readInt() {
+    char * end;
+    char rawInput[LINE_LENGTH];
+    scanf("%s", rawInput);
+    return strtol(rawInput, &end, 10);
+}
+
 Product parseCSV(char * line) {
     Product product;
     char * end;
@@ -63,8 +70,7 @@ int addItem(FILE * bill) {
     char PID[PID_LENGTH];
     scanf("%s", PID);
     printf("Quantity:");
-    int quantity;
-    scanf("%d", &quantity);
+    int quantity = readInt();
     Product prodDetails = getDetails(PID);
     if (prodDetails.pricePerItem) {
         int price = prodDetails.pricePerItem * quantity;
@@ -89,8 +95,7 @@ void makeInvoice() {
     fprintf(bill, "\t\t\t\tINVOICE\nPID\t\tName\tQuantity\tPricePerItem\tPrice");
     while (!isPrinted) {
         printf("\n[1] Add Item\n[2] Print Bill\n[0] Cancel Bill\nChoose an option:");
-        int option;
-        scanf("%d", &option);
+        int option = readInt();
         switch (option) {
             case 0:
                 return;
@@ -119,7 +124,7 @@ int addProduct() {
     printf("Enter Product Name:");
     scanf("%s", name);
     printf("Enter Price Per Item:");
-    scanf("%d", &pricePerItem);
+    pricePerItem = readInt();
     fprintf(products, "\n%s, %s, %d", PID, name, pricePerItem);
     fclose(products);
     return 1;
@@ -167,8 +172,7 @@ int main() {
     printf("\t\tBilling System");
     while (true) {
         printf("\n[1] Make Invoice\n[2] Add New Product\n[3] Delete A Product\n[4] Print Inventory\n[0] Exit\nChoose an option:");
-        int option;
-        scanf("%d", &option);
+        int option = readInt();
         switch (option) {
             case 0:
                 exit(0);
