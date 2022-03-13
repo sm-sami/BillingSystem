@@ -3,47 +3,74 @@
 #include <string.h>
 #include <stdbool.h>
 
-struct Product {
+#define PID_LENGTH 5
+#define MAX_PRODUCT_NAME_LENGTH 25
+#define LINE_LENGTH 1025
+
+typedef struct{
     char * PID, * name;
     int pricePerItem;
-};
+} Product;
 
-typedef struct Product Product;
+int readInt() {
+    char * end;
+    char rawInput[LINE_LENGTH];
+    scanf("%s", rawInput);
+    return strtol(rawInput, &end, 10);
+}
 
 Product parseCSV(char * line) {
     Product product;
+    char * end;
     char * token = strtok(line, ", ");
     product.PID = token;
     token = strtok(NULL, ", ");
     product.name = token;
     token = strtok(NULL, ", ");
-    product.pricePerItem = atoi(token);
+    product.pricePerItem = strtol(token, &end, 10);
     return product;
+}
+
+int validatePID(char * PID) {
+    FILE * products;
+    char line[LINE_LENGTH];
+    products = fopen("Products.csv", "r");
+    Product product;
+    while (fgets(line, LINE_LENGTH, products)) {
+        product = parseCSV(line);
+        if (!strcmp(PID, product.PID)) {
+            fclose(products);
+            return 1;
+        }
+    }
+    fclose(products);
+    return 0;
 }
 
 Product getDetails(char * PID) {
     Product product;
-    char line[1024];
-    FILE * products;
-    products = fopen("Products.csv", "r");
-    while (fgets(line, 1024, products)) {
-        product = parseCSV(line);
-        if (!strcmp(PID, product.PID)) {
-            return product;
-        }
-    }
     product.pricePerItem = 0;
     product.name = "NOT FOUND";
+    if (validatePID(PID)) {
+        char line[LINE_LENGTH];
+        FILE *products;
+        products = fopen("Products.csv", "r");
+        while (fgets(line, LINE_LENGTH, products)) {
+            product = parseCSV(line);
+            if (!strcmp(PID, product.PID)) {
+                return product;
+            }
+        }
+    }
     return product;
 }
 
 int addItem(FILE * bill) {
     printf("\nEnter PID:");
-    char PID[5];
+    char PID[PID_LENGTH];
     scanf("%s", PID);
     printf("Quantity:");
-    int quantity;
-    scanf("%d", &quantity);
+    int quantity = readInt();
     Product prodDetails = getDetails(PID);
     if (prodDetails.pricePerItem) {
         int price = prodDetails.pricePerItem * quantity;
@@ -68,8 +95,7 @@ void makeInvoice() {
     fprintf(bill, "\t\t\t\tINVOICE\nPID\t\tName\tQuantity\tPricePerItem\tPrice");
     while (!isPrinted) {
         printf("\n[1] Add Item\n[2] Print Bill\n[0] Cancel Bill\nChoose an option:");
-        int option;
-        scanf("%d", &option);
+        int option = readInt();
         switch (option) {
             case 0:
                 return;
@@ -87,25 +113,9 @@ void makeInvoice() {
     }
 }
 
-int validatePID(char * PID) {
-    FILE * products;
-    char line[1024];
-    products = fopen("Products.csv", "r");
-    Product product;
-    while (fgets(line, 1024, products)) {
-        product = parseCSV(line);
-        if (!strcmp(PID, product.PID)) {
-            fclose(products);
-            return 1;
-        }
-    }
-    fclose(products);
-    return 0;
-}
-
 int addProduct() {
     FILE * products;
-    char PID[5], name[25];
+    char PID[PID_LENGTH], name[MAX_PRODUCT_NAME_LENGTH];
     int pricePerItem;
     printf("\nEnter PID:");
     scanf("%s", PID);
@@ -114,7 +124,7 @@ int addProduct() {
     printf("Enter Product Name:");
     scanf("%s", name);
     printf("Enter Price Per Item:");
-    scanf("%d", &pricePerItem);
+    pricePerItem = readInt();
     fprintf(products, "\n%s, %s, %d", PID, name, pricePerItem);
     fclose(products);
     return 1;
@@ -122,7 +132,7 @@ int addProduct() {
 
 int deleteProduct() {
     FILE * products, * productsNew;
-    char line[1024], PID[5];
+    char line[LINE_LENGTH], PID[PID_LENGTH];
     products = fopen("Products.csv", "r");
     productsNew = fopen("Products_New.csv", "w");
     Product product;
@@ -130,9 +140,9 @@ int deleteProduct() {
     scanf("%s", PID);
     if (validatePID(PID)) {
         int newLine = 0;
-        while (fgets(line, 1024, products)) {
+        while (fgets(line, LINE_LENGTH, products)) {
             product = parseCSV(line);
-            if (strcmp(PID, product.PID)) {
+            if (strcmp(PID, product.PID) != 0) {
                 if(newLine++) fprintf(productsNew, "\n");
                 fprintf(productsNew, "%s, %s, %d", product.PID, product.name, product.pricePerItem);
             }
@@ -148,11 +158,11 @@ int deleteProduct() {
 
 void printInventory() {
     FILE * products;
-    char line[1024];
+    char line[LINE_LENGTH];
     Product product;
     products = fopen("Products.csv", "r");
     printf("\nPID\tName\tPricePerItem\n");
-    while (fgets(line, 1024, products)) {
+    while (fgets(line, LINE_LENGTH, products)) {
         product = parseCSV(line);
         printf("%s\t%s\t%d\n", product.PID, product.name, product.pricePerItem);
     }
@@ -162,8 +172,7 @@ int main() {
     printf("\t\tBilling System");
     while (true) {
         printf("\n[1] Make Invoice\n[2] Add New Product\n[3] Delete A Product\n[4] Print Inventory\n[0] Exit\nChoose an option:");
-        int option;
-        scanf("%d", &option);
+        int option = readInt();
         switch (option) {
             case 0:
                 exit(0);
