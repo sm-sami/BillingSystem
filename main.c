@@ -70,10 +70,10 @@ int addItem(FILE * bill) {
     printf("\nEnter PID:");
     char PID[PID_LENGTH];
     scanf("%s", PID);
-    printf("Quantity:");
-    int quantity = readInt();
-    Product prodDetails = getDetails(PID);
-    if (prodDetails.pricePerItem) {
+    if (validatePID(PID)) {
+        printf("Quantity:");
+        int quantity = readInt();
+        Product prodDetails = getDetails(PID);
         int price = prodDetails.pricePerItem * quantity;
         fprintf(bill, "\n%s\t%s\t%d\t\t\t%d\t\t\t\t%d", PID, prodDetails.name, quantity, prodDetails.pricePerItem, price);
         return price;
