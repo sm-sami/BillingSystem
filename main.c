@@ -61,6 +61,7 @@ Product getDetails(char * PID) {
                 return product;
             }
         }
+        fclose(products);
     }
     return product;
 }
@@ -166,6 +167,7 @@ void printInventory() {
         product = parseCSV(line);
         printf("%s\t%s\t%d\n", product.PID, product.name, product.pricePerItem);
     }
+    fclose(products);
 }
 
 int main() {
